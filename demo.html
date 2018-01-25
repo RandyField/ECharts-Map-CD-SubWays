@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>
+        helloworld
+    </title>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=R1eMWGSzeprDxlvrYQC9pTasVAABQjOh"></script>
+    <script src="asset/echart/echarts.js"></script>
+    <script src="asset/echart/extension/bmap.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        #main {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+</body>
+<script>
+    var geoCoordMap = {
+        "天府三街": [104.075175, 30.552622],
+        "世纪城": [104.074947, 30.560878]
+    }
+
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var geoCoord = geoCoordMap[data[i].name];
+            if (geoCoord) {
+                res.push({
+                    name: data[i].name,
+                    value: geoCoord.concat(data[i].value)
+                });
+            }
+        }
+        return res;
+    };
+
+
+
+    option = {
+        backgroundColor: '#404a59',
+        title: {
+            text: '地铁线路测试',
+            subtext: '地铁线路测试',
+            sublink: 'http://www.baidu.com',
+            x: 'center',
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                return params.name + ' : ' + params.value[2]; // 0-1分别是经纬度
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            y: 'bottom',
+            x: 'right',
+            data: ['pm2.5'],
+            textStyle: {
+                color: '#fff'
+            }
+        },
+
+        //左下角地图
+        visualMap: {
+            min: 0,
+            max: 200,
+            calculable: true,
+            inRange: {
+                color: ['#50a3ba', '#eac736', '#d94e5d']
+            },
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        bmap: {
+            // center: [120.13066322374, 30.240018034923],
+            center: [104.072329, 30.66342],
+            zoom: 13,
+            roam: true,
+            mapStyle: {
+                styleJson: [{
+                        'featureType': 'land', //调整土地颜色
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#081734'
+                        }
+                    },
+                    {
+                        'featureType': 'building', //调整建筑物颜色
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#04406F'
+                        }
+                    },
+                    {
+                        'featureType': 'building', //调整建筑物标签是否可视
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'highway', //调整高速道路颜色
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#015B99'
+                        }
+                    },
+                    {
+                        'featureType': 'highway', //调整高速名字是否可视
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        "featureType": "poilabel", //过滤兴趣点-机场-旅游景点-教育-医疗
+                        "elementType": "labels",
+                        "stylers": {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        "featureType": "town", //过滤乡镇
+                        "elementType": "labels",
+                        "stylers": {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'arterial', //调整一些干道颜色
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#003051'
+                        }
+                    },
+                    {
+                        "featureType": "arterial",
+                        "elementType": "labels",
+                        "stylers": {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'arterial',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'green',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'water',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#044161'
+                        }
+                    },
+                    {
+                        'featureType': 'subway', //调整地铁颜色
+                        'elementType': 'geometry.stroke',
+                        'stylers': {
+                            'color': '#003051'
+                        }
+                    },
+                    {
+                        'featureType': 'subway',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'on'
+                        }
+                    },
+                    {
+                        'featureType': 'railway',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'railway',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'all', //调整所有的标签的边缘颜色
+                        'elementType': 'labels.text.stroke',
+                        'stylers': {
+                            'color': '#313131'
+                        }
+                    },
+                    {
+                        'featureType': 'all', //调整所有标签的填充颜色
+                        'elementType': 'labels.text.fill',
+                        'stylers': {
+                            'color': '#FFFFFF'
+                        }
+                    },
+                    {
+                        'featureType': 'manmade',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'manmade',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'local',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'local',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    },
+                    {
+                        'featureType': 'subway',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            "weight": "1.4",
+                            "lightness": 0,
+                            "saturation": 100,
+                            "visibility": "on"
+                        }
+                    },
+                    {
+                        'featureType': 'railway',
+                        'elementType': 'all',
+                        'stylers': {
+                            'lightness': -40
+                        }
+                    },
+                    {
+                        'featureType': 'boundary',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#8b8787',
+                            'weight': '1',
+                            'lightness': -29
+                        }
+                    }
+                ]
+            }
+        },
+        series: [{
+            name: 'pm2.5',
+            type: 'scatter',
+            coordinateSystem: 'bmap',
+            data: convertData([{
+                    name: "天府三街",
+                    value: "4个出口"
+                },
+                {
+                    name: "世纪城",
+                    value: "5个出口"
+                }
+            ]),
+            symbol:"diamond",
+            symbolSize: 12,
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: false
+                }
+            },
+            itemStyle: {
+                emphasis: {
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }
+            }
+        }]
+    }
+    var myChart = echarts.init(document.getElementById('main'));
+
+    myChart.setOption(option);
+</script>
+
+</html>
